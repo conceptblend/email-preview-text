@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge;" />
+    <link href="https://unpkg.com/cirrus-ui" type="text/css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,300,400,600,700"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:400,700"
+      rel="stylesheet"
+    />
+    <title>Email Preview Text</title>
+  </head>
+  <body>
+    <div class="u-flex u-center h-100p min-w-xs max-w-xs">
+      <div class="frame u-flex u-flex-column px-3 py-4 min-w-xs">
+        <form id="builder">
+          <label for="previewText">Preview text</label>
+          <input
+            type="text"
+            maxlength="80"
+            required
+            id="previewText"
+            name="previewText"
+            placeholder="Enter your preview text..."
+            class="input--md mb-1"
+          />
+          <button type="submit" class="btn-dark btn--sm w-100p my-1">
+            Build preview text MJML
+          </button>
+        </form>
+        <pre><code id="output" class="u-text-break u-none mt-2 mb-1"></code></pre>
+        <button class="btn-success btn--sm w-100p u-none my-1" id="clip">
+          Copy MJML to clipboard
+        </button>
+      </div>
+    </div>
+    <script>
+      let o = document.getElementById("output");
+      let c = document.getElementById("clip");
+
+      document.getElementById("builder").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const formData = Object.fromEntries(new FormData(e.target));
+
+        o.classList.remove("u-none");
+        c.classList.remove("u-none");
+
+        // const whitespacePadding = Array(80).fill("&#160;&#8203;").join("");
+        const whitespacePadding = Array(120).fill("&nbsp;&zwnj;").join("");
+        o.innerText = `<mj-section><mj-column><mj-preview>${formData.previewText}${whitespacePadding}</mj-preview></mj-column></mj-section>`;
+      });
+
+      c.addEventListener("click", (e) => {
+        navigator.clipboard.writeText(o.innerText).then(
+          () => {
+            /* clipboard successfully set */
+            alert("MJML copied to clipboard!");
+          },
+          () => {
+            /* clipboard write failed */
+            alert("An error occurred and MJML was not copied.");
+          }
+        );
+      });
+    </script>
+  </body>
+</html>
