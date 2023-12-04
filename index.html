@@ -32,33 +32,50 @@
             placeholder="Enter your preview text..."
             class="input--md mb-1"
           />
+          <div>
+            <label for="mjmlPreviewWrap"
+              ><small>
+                <input
+                  type="checkbox"
+                  id="mjmlPreviewWrap"
+                  name="mjmlPreviewWrap"
+                  checked
+                />
+                Wrap with <code>&lt;mj-preview&gt;</code>
+              </small>
+            </label>
+          </div>
           <button type="submit" class="btn-dark btn--sm w-100p my-1">
-            Build preview text MJML
+            Build preview text with padding
           </button>
         </form>
         <pre><code id="output" class="u-text-break u-none mt-2 mb-1"></code></pre>
         <button class="btn-success btn--sm w-100p u-none my-1" id="clip">
-          Copy MJML to clipboard
+          Copy to clipboard
         </button>
       </div>
     </div>
     <script>
       let o = document.getElementById("output");
-      let c = document.getElementById("clip");
+      let cb = document.getElementById("clip");
 
       document.getElementById("builder").addEventListener("submit", (e) => {
         e.preventDefault();
         const formData = Object.fromEntries(new FormData(e.target));
 
         o.classList.remove("u-none");
-        c.classList.remove("u-none");
+        cb.classList.remove("u-none");
 
-        // const whitespacePadding = Array(80).fill("&#160;&#8203;").join("");
+        // alt: "&#160;&#8203;"
         const whitespacePadding = Array(120).fill("&nbsp;&zwnj;").join("");
-        o.innerText = `<mj-section><mj-column><mj-preview>${formData.previewText}${whitespacePadding}</mj-preview></mj-column></mj-section>`;
+        // <mj-section><mj-column><mj-preview></mj-preview></mj-column></mj-section>
+        let previewRender = `${formData.previewText}${whitespacePadding}`;
+        if (formData.mjmlPreviewWrap)
+          previewRender = `<mj-preview>${previewRender}</mj-preview>`;
+        o.innerText = previewRender;
       });
 
-      c.addEventListener("click", (e) => {
+      cb.addEventListener("click", (e) => {
         navigator.clipboard.writeText(o.innerText).then(
           () => {
             /* clipboard successfully set */
